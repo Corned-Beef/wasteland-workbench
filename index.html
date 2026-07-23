@@ -87,9 +87,13 @@
       #list li.click { cursor: pointer; }
       #list li.click:hover { background: color-mix(in srgb, var(--amber) 12%, transparent); }
       #previewwrap { border: 1px solid var(--edge); border-radius: 6px; background: var(--panel); padding: 1rem 1.25rem; }
+      #mapcard { border: 1px solid var(--edge); border-radius: 6px; background: var(--panel); padding: 1.25rem 1.5rem; }
+      #mapcard select { padding: 0.5rem 0.75rem; font: inherit; color: var(--text); background: var(--ground); border: 1px solid var(--edge); border-radius: 4px; }
+      #mapwrap { overflow: auto; max-height: 70vh; border: 1px solid var(--edge); border-radius: 6px; margin-top: 0.75rem; }
+      #mapcanvas { display: block; }
       #preview { margin: 0; overflow-x: auto; white-space: pre; font-size: 0.8rem; line-height: 1.45; max-height: 40vh; overflow-y: auto; }
     </style>
-    <script type="module" crossorigin src="./assets/index-DVdbDYDz.js"></script>
+    <script type="module" crossorigin src="./assets/index-3z6t3ANW.js"></script>
   </head>
   <body>
     <div class="wrap">
@@ -126,6 +130,23 @@
       <div id="summary"></div>
       <input id="filter" type="search" placeholder="filter paths… (e.g. critters, .msg, scripts)" hidden />
       <ul id="list"></ul>
+      <div id="mapcard" hidden>
+        <div class="cardtitle">Map renderer — Fallout 2 floor tiles</div>
+        <div class="fields">
+          <select id="mapsel" aria-label="map"></select>
+          <div style="display: flex; gap: 0.6rem; flex-wrap: wrap">
+            <select id="mapelev" aria-label="elevation">
+              <option value="0">elevation 0</option>
+              <option value="1">elevation 1</option>
+              <option value="2">elevation 2</option>
+            </select>
+            <button type="button" id="maprender">Render map</button>
+          </div>
+        </div>
+        <div class="note" id="mapstatus"></div>
+        <div id="mapwrap" hidden><canvas id="mapcanvas"></canvas></div>
+      </div>
+
       <div id="previewwrap" hidden>
         <div class="cardtitle" id="previewtitle"></div>
         <pre id="preview"></pre>
