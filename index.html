@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Wasteland Workbench — DAT Inspector</title>
+    <style>
+      :root {
+        --ground: #131009;
+        --panel: #1d1812;
+        --edge: #37301f;
+        --amber: #ffb642;
+        --text: #d6c9a3;
+        --dim: #8a7c5c;
+        --ok: #a6d84b;
+        color-scheme: dark;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        background: var(--ground);
+        color: var(--text);
+        font: 14px/1.6 ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+      }
+      .wrap { max-width: 760px; margin: 0 auto; padding: 2.5rem 1.25rem 4rem; display: flex; flex-direction: column; gap: 1.25rem; }
+      header { border-bottom: 1px solid var(--edge); padding-bottom: 1.25rem; }
+      .eyebrow { color: var(--dim); font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; }
+      h1 { margin: 0.35rem 0 0.2rem; font-size: 1.35rem; font-weight: 600; color: var(--amber); text-wrap: balance; }
+      .sub { margin: 0; color: var(--dim); font-size: 0.85rem; }
+      #drop {
+        border: 1px dashed var(--edge);
+        border-radius: 6px;
+        background: var(--panel);
+        padding: 2rem 1.5rem;
+        text-align: center;
+        transition: border-color 120ms;
+      }
+      #drop.hover { border-color: var(--amber); }
+      #drop p { margin: 0 0 1rem; }
+      .actions { display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; }
+      button {
+        font: inherit;
+        color: var(--ground);
+        background: var(--amber);
+        border: 0;
+        border-radius: 4px;
+        padding: 0.5rem 1rem;
+        cursor: pointer;
+      }
+      button.quiet { background: transparent; color: var(--amber); border: 1px solid var(--edge); }
+      button:hover { filter: brightness(1.1); }
+      button:focus-visible, input:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
+      .note { color: var(--dim); font-size: 0.78rem; margin-top: 1rem; }
+      #summary { color: var(--ok); min-height: 1.5em; }
+      #summary.err { color: var(--amber); }
+      input[type='search'] {
+        width: 100%;
+        padding: 0.55rem 0.75rem;
+        font: inherit;
+        color: var(--text);
+        background: var(--panel);
+        border: 1px solid var(--edge);
+        border-radius: 4px;
+      }
+      #list { list-style: none; margin: 0; padding: 0; max-height: 55vh; overflow: auto; border: 1px solid var(--edge); border-radius: 6px; }
+      #list:empty { display: none; }
+      #list li {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 4.5em 11em;
+        gap: 1rem;
+        padding: 0.28rem 0.75rem;
+        border-bottom: 1px solid color-mix(in srgb, var(--edge) 50%, transparent);
+        white-space: nowrap;
+      }
+      #list li:nth-child(odd) { background: color-mix(in srgb, var(--panel) 60%, transparent); }
+      #list li span:first-child { overflow: hidden; text-overflow: ellipsis; }
+      .meta { color: var(--dim); font-variant-numeric: tabular-nums; text-align: right; }
+      footer { color: var(--dim); font-size: 0.78rem; border-top: 1px solid var(--edge); padding-top: 1rem; }
+      #ghcard { border: 1px solid var(--edge); border-radius: 6px; background: var(--panel); padding: 1.25rem 1.5rem; }
+      .cardtitle { color: var(--amber); font-size: 0.85rem; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.5rem; }
+      .fields { display: flex; flex-direction: column; gap: 0.6rem; }
+      .fields input[type='text'], .fields input[type='password'] {
+        width: 100%; padding: 0.5rem 0.75rem; font: inherit; color: var(--text);
+        background: var(--ground); border: 1px solid var(--edge); border-radius: 4px;
+      }
+      .fields button { align-self: flex-start; }
+      #list li.click { cursor: pointer; }
+      #list li.click:hover { background: color-mix(in srgb, var(--amber) 12%, transparent); }
+      #previewwrap { border: 1px solid var(--edge); border-radius: 6px; background: var(--panel); padding: 1rem 1.25rem; }
+      #preview { margin: 0; overflow-x: auto; white-space: pre; font-size: 0.8rem; line-height: 1.45; max-height: 40vh; overflow-y: auto; }
+    </style>
+    <script type="module" crossorigin src="./assets/index-6wCo-65K.js"></script>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <div class="eyebrow">Wasteland &amp; Wyverns — Workbench</div>
+        <h1>DAT Archive Inspector</h1>
+        <p class="sub">Milestone 0 · parses Fallout 1 (DAT1) and Fallout 2 (DAT2) archive directories</p>
+      </header>
+
+      <div id="drop">
+        <p>Drop a <strong>master.dat</strong> or <strong>critter.dat</strong> here — or</p>
+        <div class="actions">
+          <label><input id="file" type="file" style="display: none" /><button type="button" id="browse">Browse for a DAT file</button></label>
+          <button type="button" id="demo" class="quiet">Load synthetic demo archive</button>
+        </div>
+        <p class="note">Your file is parsed locally in this page. Nothing is uploaded anywhere.</p>
+      </div>
+
+      <div id="ghcard">
+        <div class="cardtitle">Stream from GitHub — no download</div>
+        <p class="note" style="margin-top: 0">
+          Connects to this repo's private <code>stream-pack</code> release and browses it lazily:
+          the index first, then only the bytes of entries you open (HTTP Range requests).
+          Your token is sent only to <code>api.github.com</code> and can be stored on this device only.
+        </p>
+        <div class="fields">
+          <input id="ghrepo" type="text" spellcheck="false" value="Corned-Beef/fictional-pancake" aria-label="owner/repo" />
+          <input id="ghtoken" type="password" placeholder="fine-grained token (Contents: read-only)" aria-label="GitHub token" />
+          <label class="note"><input id="ghremember" type="checkbox" /> remember token on this device</label>
+          <button type="button" id="ghconnect">Connect &amp; stream</button>
+        </div>
+      </div>
+
+      <div id="summary"></div>
+      <input id="filter" type="search" placeholder="filter paths… (e.g. critters, .msg, scripts)" hidden />
+      <ul id="list"></ul>
+      <div id="previewwrap" hidden>
+        <div class="cardtitle" id="previewtitle"></div>
+        <pre id="preview"></pre>
+      </div>
+      <div class="note" id="counter"></div>
+
+      <footer>
+        Entries show stored → real byte sizes and compression (zlib for DAT2, LZSS for DAT1).
+        The synthetic demo archive is original fixture data — no game content ships with this page.
+      </footer>
+    </div>
+  </body>
+</html>
