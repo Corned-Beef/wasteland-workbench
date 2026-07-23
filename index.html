@@ -91,13 +91,14 @@
       #mapcard select { padding: 0.5rem 0.75rem; font: inherit; color: var(--text); background: var(--ground); border: 1px solid var(--edge); border-radius: 4px; }
       #mapwrap { overflow: auto; max-height: 70vh; border: 1px solid var(--edge); border-radius: 6px; margin-top: 0.75rem; }
       #mapcanvas { display: block; }
+      #playcanvas { display: block; width: 100%; height: 65vh; border: 1px solid var(--edge); border-radius: 6px; background: #000; touch-action: manipulation; image-rendering: pixelated; }
       #preview { margin: 0; overflow-x: auto; white-space: pre; font-size: 0.8rem; line-height: 1.45; max-height: 40vh; overflow-y: auto; }
       #spritebox { display: flex; flex-direction: column; gap: 0.6rem; align-items: flex-start; margin-bottom: 0.75rem; }
       #spritecanvas { image-rendering: pixelated; background: #0c0a06; border: 1px solid var(--edge); border-radius: 4px; }
       #spritedirs button { padding: 0.3rem 0.7rem; }
       #spritedirs button[aria-pressed='true'] { outline: 2px solid var(--amber); }
     </style>
-    <script type="module" crossorigin src="./assets/index-DmJYvoLU.js"></script>
+    <script type="module" crossorigin src="./assets/index-DxKEvJig.js"></script>
   </head>
   <body>
     <div class="wrap">
@@ -145,10 +146,20 @@
               <option value="2">elevation 2</option>
             </select>
             <button type="button" id="maprender">Render map</button>
+            <button type="button" id="mapwalk">Walk this map</button>
           </div>
         </div>
         <div class="note" id="mapstatus"></div>
         <div id="mapwrap" hidden><canvas id="mapcanvas"></canvas></div>
+      </div>
+
+      <div id="playwrap" hidden>
+        <div class="cardtitle">Walk mode — tap anywhere to move</div>
+        <canvas id="playcanvas"></canvas>
+        <div style="display: flex; gap: 0.75rem; align-items: center; margin-top: 0.6rem">
+          <button type="button" id="playexit" class="quiet">Exit walk mode</button>
+          <span class="note" id="playstatus"></span>
+        </div>
       </div>
 
       <div id="previewwrap" hidden>
