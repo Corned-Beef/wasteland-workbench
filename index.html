@@ -134,6 +134,10 @@
         width: min(420px, 90vw);
       }
       #dlgpanel button { margin-top: 0.5rem; }
+      #combathud {
+        top: calc(env(safe-area-inset-top, 0px) + 8px); left: 50%; transform: translateX(-50%);
+        color: var(--amber); white-space: nowrap; font-size: 0.85rem;
+      }
       #preview { margin: 0; overflow-x: auto; white-space: pre; font-size: 0.8rem; line-height: 1.45; max-height: 40vh; overflow-y: auto; }
       #spritebox { display: flex; flex-direction: column; gap: 0.6rem; align-items: flex-start; margin-bottom: 0.75rem; }
       #spritebox[hidden] { display: none; }
@@ -141,7 +145,7 @@
       #spritedirs button { padding: 0.3rem 0.7rem; }
       #spritedirs button[aria-pressed='true'] { outline: 2px solid var(--amber); }
     </style>
-    <script type="module" crossorigin src="./assets/index-DVpyIfhW.js"></script>
+    <script type="module" crossorigin src="./assets/index-D1nW1gvY.js"></script>
   </head>
   <body>
     <div class="wrap">
@@ -204,8 +208,10 @@
           <button type="button" id="playexit">✕ exit</button>
         </div>
         <div id="playbotbar">
+          <button type="button" id="endturnbtn" hidden>⌛ end turn</button>
           <button type="button" id="invbtn">⋔ gear</button>
         </div>
+        <div id="combathud" class="overlay" hidden></div>
         <span id="playstatus"></span>
         <div id="invpanel" class="overlay" hidden>
           <div class="cardtitle" style="margin-bottom: 0.2rem">Gear</div>
