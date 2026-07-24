@@ -117,6 +117,12 @@
       /* manipulation kills Safari's double-tap smart zoom on the HUD without
          delaying button taps; the canvas below opts all the way out. */
       #playwrap, #playwrap * { touch-action: manipulation; }
+      /* a long-press is the game's context ring, never a text selection or the
+         iOS callout menu — suppress both across the whole play surface. */
+      #playwrap, #playwrap * {
+        -webkit-user-select: none; user-select: none;
+        -webkit-touch-callout: none;
+      }
       /* GL world canvas under a transparent 2D overlay (floats, HUD text). */
       #playstage { position: relative; flex: 1; min-height: 0; background: #000; }
       #playgl { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 41; touch-action: none; image-rendering: pixelated; }
@@ -251,7 +257,7 @@
       #spritedirs button { padding: 0.3rem 0.7rem; }
       #spritedirs button[aria-pressed='true'] { outline: 2px solid var(--amber); }
     </style>
-    <script type="module" crossorigin src="./assets/index-DYJv7ewP.js"></script>
+    <script type="module" crossorigin src="./assets/index-BUBtli0n.js"></script>
   </head>
   <body>
     <div class="wrap">
