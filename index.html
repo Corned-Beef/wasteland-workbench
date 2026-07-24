@@ -103,6 +103,9 @@
       }
       /* display:flex above outranks the UA's [hidden]{display:none} — restore it */
       #playwrap[hidden] { display: none; }
+      /* manipulation kills Safari's double-tap smart zoom on the HUD without
+         delaying button taps; the canvas below opts all the way out. */
+      #playwrap, #playwrap * { touch-action: manipulation; }
       /* touch-action:none — the game handles its own taps and pinch-zoom */
       #playcanvas { display: block; flex: 1; width: 100%; min-height: 0; background: #000; touch-action: none; image-rendering: pixelated; }
       .overlay {
@@ -169,7 +172,7 @@
       #spritedirs button { padding: 0.3rem 0.7rem; }
       #spritedirs button[aria-pressed='true'] { outline: 2px solid var(--amber); }
     </style>
-    <script type="module" crossorigin src="./assets/index-CqE9Sofx.js"></script>
+    <script type="module" crossorigin src="./assets/index-Qlm_xJ56.js"></script>
   </head>
   <body>
     <div class="wrap">
