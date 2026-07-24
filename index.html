@@ -157,6 +157,13 @@
       }
       #classicbar[hidden] { display: none; }
       #ifacecanvas { display: block; width: min(100%, 720px); image-rendering: pixelated; touch-action: manipulation; }
+      /* Original-style options menu (opbase.frm panel with lozenge buttons). */
+      #optwrap {
+        position: absolute; inset: 0; z-index: 46; background: #000a;
+        display: flex; align-items: center; justify-content: center;
+      }
+      #optwrap[hidden] { display: none; }
+      #optcanvas { image-rendering: pixelated; width: min(228px, 58vw); touch-action: manipulation; }
       body.classic #hphud, body.classic #playbotbar, body.classic #playstatus { display: none; }
       #invpanel {
         right: calc(env(safe-area-inset-right, 0px) + 8px); bottom: calc(env(safe-area-inset-bottom, 0px) + var(--dockh, 60px));
@@ -182,7 +189,7 @@
       #spritedirs button { padding: 0.3rem 0.7rem; }
       #spritedirs button[aria-pressed='true'] { outline: 2px solid var(--amber); }
     </style>
-    <script type="module" crossorigin src="./assets/index-9GODAap9.js"></script>
+    <script type="module" crossorigin src="./assets/index-CuiNeRPQ.js"></script>
   </head>
   <body>
     <div class="wrap">
@@ -240,6 +247,7 @@
       <div id="playwrap" hidden>
         <canvas id="playcanvas"></canvas>
         <div id="classicbar" hidden><canvas id="ifacecanvas"></canvas></div>
+        <div id="optwrap" hidden><canvas id="optcanvas"></canvas></div>
         <div id="playtop">
           <div id="questhud" class="overlay" hidden></div>
           <div id="combathud" class="overlay" hidden></div>
