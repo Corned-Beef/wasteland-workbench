@@ -175,6 +175,45 @@
       }
       #optwrap[hidden] { display: none; }
       #optcanvas { image-rendering: pixelated; width: min(228px, 58vw); touch-action: manipulation; }
+      /* CRT scanline overlay (optional display filter). */
+      #scanlines {
+        position: absolute; inset: 0; z-index: 43; pointer-events: none;
+        background: repeating-linear-gradient(0deg, rgba(0,0,0,0.28) 0, rgba(0,0,0,0.28) 1px, transparent 1px, transparent 3px);
+        mix-blend-mode: multiply;
+      }
+      #scanlines[hidden] { display: none; }
+      /* Long-press context ring: action buttons around the tap point. */
+      #ctxring { position: absolute; z-index: 47; }
+      #ctxring[hidden] { display: none; }
+      #ctxring button {
+        position: absolute; transform: translate(-50%, -50%);
+        min-height: 40px; padding: 0.4rem 0.7rem; border-radius: 999px;
+        background: color-mix(in srgb, var(--panel) 92%, transparent); color: var(--amber);
+        border: 1px solid var(--amber); box-shadow: 0 2px 10px #000b;
+        backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); font-size: 0.8rem;
+      }
+      /* Settings sheet (radio / display / saves) — works in both interfaces. */
+      #setsheet {
+        position: absolute; inset: 0; z-index: 48; background: #000a;
+        display: flex; align-items: center; justify-content: center; padding: 1rem;
+      }
+      #setsheet[hidden] { display: none; }
+      #setpanel { position: static; width: min(420px, 92vw); max-height: 84vh; overflow-y: auto; }
+      .setrow { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
+      .setrow .cardtitle { flex: 1; margin: 0; }
+      #setpanel button.quiet[aria-pressed='true'] { background: var(--amber); color: var(--ground); }
+      #radiolist, #slotlist { list-style: none; margin: 0.4rem 0 0; padding: 0; display: flex; flex-direction: column; gap: 0.3rem; }
+      #radiolist li, #slotlist li {
+        display: flex; gap: 0.6rem; align-items: center; padding: 0.4rem 0.6rem; border-radius: 6px;
+        border: 1px solid var(--edge); cursor: pointer;
+      }
+      #radiolist li:hover, #slotlist li:hover { border-color: var(--amber); }
+      #radiolist li.playing { border-color: var(--amber); color: var(--amber); }
+      #radiolist li .rname { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      #slotlist li img { width: 64px; height: 36px; object-fit: cover; border: 1px solid var(--edge); border-radius: 3px; image-rendering: pixelated; background:#000; }
+      #slotlist li .sinfo { flex: 1; font-size: 0.78rem; }
+      #slotlist li .sload, #slotlist li .ssave { min-height: 32px; padding: 0.25rem 0.6rem; }
+      #ffbtn[aria-pressed='true'] { background: var(--amber); color: var(--ground); }
       body.classic #hphud, body.classic #playbotbar, body.classic #playstatus { display: none; }
       #invpanel {
         right: calc(env(safe-area-inset-right, 0px) + 8px); bottom: calc(env(safe-area-inset-bottom, 0px) + var(--dockh, 60px));
@@ -208,7 +247,7 @@
       #spritedirs button { padding: 0.3rem 0.7rem; }
       #spritedirs button[aria-pressed='true'] { outline: 2px solid var(--amber); }
     </style>
-    <script type="module" crossorigin src="./assets/index-EhDShQ6d.js"></script>
+    <script type="module" crossorigin src="./assets/index-bB2-In8k.js"></script>
   </head>
   <body>
     <div class="wrap">
@@ -284,6 +323,7 @@
 
       <div id="playwrap" hidden>
         <canvas id="playcanvas"></canvas>
+        <div id="scanlines" hidden></div>
         <div id="classicbar" hidden><canvas id="ifacecanvas"></canvas></div>
         <div id="optwrap" hidden><canvas id="optcanvas"></canvas></div>
         <div id="playtop">
@@ -292,16 +332,19 @@
           <div id="topbtns">
             <button type="button" id="zoomout" aria-label="zoom out">−</button>
             <button type="button" id="zoomin" aria-label="zoom in">+</button>
+            <button type="button" id="setbtn" aria-label="settings">⚙</button>
             <button type="button" id="playexit" aria-label="exit">✕</button>
           </div>
         </div>
         <div id="hphud" class="overlay"></div>
         <div id="playbotbar">
+          <button type="button" id="ffbtn" title="fast-forward" aria-pressed="false">» 1×</button>
           <button type="button" id="endturnbtn" hidden>⌛ end turn</button>
           <button type="button" id="invbtn">⋔ gear</button>
           <button type="button" id="uibtn" title="switch to the original interface">▤ classic</button>
         </div>
         <span id="playstatus"></span>
+        <div id="ctxring" hidden></div>
         <div id="invpanel" class="overlay" hidden>
           <div class="cardtitle" style="margin-bottom: 0.2rem">Gear</div>
           <ul id="invlist"></ul>
@@ -311,6 +354,26 @@
           <div id="dlgtext"></div>
           <ul id="dlgopts"></ul>
           <button type="button" id="dlgclose" class="quiet">Leave</button>
+        </div>
+        <div id="setsheet" hidden>
+          <div id="setpanel" class="overlay">
+            <div class="setrow"><span class="cardtitle">Settings</span><button type="button" id="setclose" class="quiet">Done</button></div>
+            <div class="cardtitle" style="margin-top:0.6rem">Radio</div>
+            <div class="setrow" id="radiomodes">
+              <button type="button" class="quiet" data-radio="map">Follow map</button>
+              <button type="button" class="quiet" data-radio="shuffle">Shuffle</button>
+              <button type="button" class="quiet" data-radio="off">Off</button>
+            </div>
+            <ul id="radiolist"></ul>
+            <div class="cardtitle" style="margin-top:0.6rem">Display</div>
+            <div class="setrow">
+              <button type="button" class="quiet" id="filtpixel">Crisp pixels</button>
+              <button type="button" class="quiet" id="filtsmooth">Smoothed</button>
+              <button type="button" class="quiet" id="filtscan">Scanlines</button>
+            </div>
+            <div class="cardtitle" style="margin-top:0.6rem">Saves</div>
+            <ul id="slotlist"></ul>
+          </div>
         </div>
       </div>
 
