@@ -28,6 +28,17 @@
       }
       .wrap { max-width: 760px; margin: 0 auto; padding: 2.5rem 1.25rem 4rem; display: flex; flex-direction: column; gap: 1.25rem; }
       header { border-bottom: 1px solid var(--edge); padding-bottom: 1.25rem; }
+      #tabs { display: flex; gap: 0.25rem; border-bottom: 1px solid var(--edge); }
+      #tabs[hidden] { display: none; }
+      #tabs button {
+        background: transparent; color: var(--dim); border: 0; border-bottom: 2px solid transparent;
+        border-radius: 0; padding: 0.5rem 1rem; font-size: 0.85rem; letter-spacing: 0.06em; text-transform: uppercase;
+      }
+      #tabs button[aria-selected='true'] { color: var(--amber); border-bottom-color: var(--amber); }
+      section[hidden] { display: none; }
+      section { display: flex; flex-direction: column; gap: 1.25rem; }
+      #continuecard { border: 1px solid var(--amber); border-radius: 6px; background: var(--panel); padding: 1.25rem 1.5rem; }
+      #continuecard button { font-weight: 600; }
       .eyebrow { color: var(--dim); font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; }
       h1 { margin: 0.35rem 0 0.2rem; font-size: 1.35rem; font-weight: 600; color: var(--amber); text-wrap: balance; }
       .sub { margin: 0; color: var(--dim); font-size: 0.85rem; }
@@ -189,7 +200,7 @@
       #spritedirs button { padding: 0.3rem 0.7rem; }
       #spritedirs button[aria-pressed='true'] { outline: 2px solid var(--amber); }
     </style>
-    <script type="module" crossorigin src="./assets/index-CuiNeRPQ.js"></script>
+    <script type="module" crossorigin src="./assets/index-Bdx8hVOh.js"></script>
   </head>
   <body>
     <div class="wrap">
@@ -199,50 +210,69 @@
         <p class="sub">Milestone 0 · parses Fallout 1 (DAT1) and Fallout 2 (DAT2) archive directories</p>
       </header>
 
-      <div id="drop">
-        <p>Drop a <strong>master.dat</strong> or <strong>critter.dat</strong> here — or</p>
-        <div class="actions">
-          <label><input id="file" type="file" style="display: none" /><button type="button" id="browse">Browse for a DAT file</button></label>
-          <button type="button" id="demo" class="quiet">Load synthetic demo archive</button>
-        </div>
-        <p class="note">Your file is parsed locally in this page. Nothing is uploaded anywhere.</p>
-      </div>
-
-      <div id="ghcard">
-        <div class="cardtitle">Stream from GitHub — no download</div>
-        <p class="note" style="margin-top: 0">
-          Connects to the private repo's machine-managed <code>pack</code> branch and browses it
-          lazily: the index first, then only the bytes of entries you open.
-          Your token is sent only to <code>api.github.com</code> and can be stored on this device only.
-        </p>
-        <div class="fields">
-          <input id="ghrepo" type="text" spellcheck="false" value="Corned-Beef/fictional-pancake" aria-label="owner/repo" />
-          <input id="ghtoken" type="password" placeholder="fine-grained token (Contents: read-only)" aria-label="GitHub token" />
-          <label class="note"><input id="ghremember" type="checkbox" /> remember token on this device</label>
-          <button type="button" id="ghconnect">Connect &amp; stream</button>
-        </div>
-      </div>
+      <nav id="tabs" hidden>
+        <button type="button" data-tab="play" aria-selected="true">Play</button>
+        <button type="button" data-tab="files" aria-selected="false">Files</button>
+        <button type="button" data-tab="conn" aria-selected="false">Connection</button>
+      </nav>
 
       <div id="summary"></div>
-      <input id="filter" type="search" placeholder="filter paths… (e.g. critters, .msg, scripts)" hidden />
-      <ul id="list"></ul>
-      <div id="mapcard" hidden>
-        <div class="cardtitle">Map renderer — Fallout 2 floor tiles</div>
-        <div class="fields">
-          <select id="mapsel" aria-label="map"></select>
-          <div style="display: flex; gap: 0.6rem; flex-wrap: wrap">
-            <select id="mapelev" aria-label="elevation">
-              <option value="0">elevation 0</option>
-              <option value="1">elevation 1</option>
-              <option value="2">elevation 2</option>
-            </select>
-            <button type="button" id="maprender">Render map</button>
-            <button type="button" id="mapwalk">Walk this map</button>
+
+      <section id="tab-play" hidden>
+        <div id="continuecard" hidden>
+          <div class="cardtitle">Saved game</div>
+          <div class="note" id="continuenote" style="margin-top: 0"></div>
+          <button type="button" id="continuebtn">▶ Continue</button>
+        </div>
+        <div id="mapcard" hidden>
+          <div class="cardtitle">Walk a map</div>
+          <div class="fields">
+            <select id="mapsel" aria-label="map"></select>
+            <div style="display: flex; gap: 0.6rem; flex-wrap: wrap">
+              <select id="mapelev" aria-label="elevation">
+                <option value="0">elevation 0</option>
+                <option value="1">elevation 1</option>
+                <option value="2">elevation 2</option>
+              </select>
+              <button type="button" id="mapwalk">Walk this map</button>
+              <button type="button" id="maprender" class="quiet">Render preview</button>
+            </div>
+          </div>
+          <div class="note" id="mapstatus"></div>
+          <div id="mapwrap" hidden><canvas id="mapcanvas"></canvas></div>
+        </div>
+      </section>
+
+      <section id="tab-files" hidden>
+        <input id="filter" type="search" placeholder="filter paths… (e.g. critters, .msg, scripts)" hidden />
+        <ul id="list"></ul>
+        <div id="previewwrap" hidden>
+          <div class="cardtitle" id="previewtitle"></div>
+          <div id="spritebox" hidden>
+            <canvas id="spritecanvas"></canvas>
+            <div class="actions" id="spritedirs"></div>
+          </div>
+          <pre id="preview"></pre>
+        </div>
+        <div class="note" id="counter"></div>
+      </section>
+
+      <section id="tab-conn">
+        <div id="ghcard">
+          <div class="cardtitle">Stream from GitHub — no download</div>
+          <p class="note" style="margin-top: 0">
+            Connects to the private repo's machine-managed <code>pack</code> branch and streams it
+            lazily: the index first, then only the bytes of entries you open.
+            Your token is sent only to <code>api.github.com</code> and can be stored on this device only.
+          </p>
+          <div class="fields">
+            <input id="ghrepo" type="text" spellcheck="false" value="Corned-Beef/fictional-pancake" aria-label="owner/repo" />
+            <input id="ghtoken" type="password" placeholder="fine-grained token (Contents: read-only)" aria-label="GitHub token" />
+            <label class="note"><input id="ghremember" type="checkbox" /> remember token on this device</label>
+            <button type="button" id="ghconnect">Connect &amp; stream</button>
           </div>
         </div>
-        <div class="note" id="mapstatus"></div>
-        <div id="mapwrap" hidden><canvas id="mapcanvas"></canvas></div>
-      </div>
+      </section>
 
       <div id="playwrap" hidden>
         <canvas id="playcanvas"></canvas>
@@ -275,19 +305,8 @@
         </div>
       </div>
 
-      <div id="previewwrap" hidden>
-        <div class="cardtitle" id="previewtitle"></div>
-        <div id="spritebox" hidden>
-          <canvas id="spritecanvas"></canvas>
-          <div class="actions" id="spritedirs"></div>
-        </div>
-        <pre id="preview"></pre>
-      </div>
-      <div class="note" id="counter"></div>
-
       <footer>
-        Entries show stored → real byte sizes and compression (zlib for DAT2, LZSS for DAT1).
-        The synthetic demo archive is original fixture data — no game content ships with this page.
+        Game data streams from your private pack on demand — no game content ships with this page.
       </footer>
     </div>
   </body>
