@@ -117,8 +117,12 @@
       /* manipulation kills Safari's double-tap smart zoom on the HUD without
          delaying button taps; the canvas below opts all the way out. */
       #playwrap, #playwrap * { touch-action: manipulation; }
+      /* GL world canvas under a transparent 2D overlay (floats, HUD text). */
+      #playstage { position: relative; flex: 1; min-height: 0; background: #000; }
+      #playgl { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 41; touch-action: none; image-rendering: pixelated; }
+      #playgl[hidden] { display: none; }
       /* touch-action:none — the game handles its own taps and pinch-zoom */
-      #playcanvas { display: block; flex: 1; width: 100%; min-height: 0; background: #000; touch-action: none; image-rendering: pixelated; }
+      #playcanvas { position: absolute; inset: 0; display: block; width: 100%; height: 100%; background: transparent; z-index: 42; touch-action: none; image-rendering: pixelated; }
       .overlay {
         position: absolute; z-index: 45; background: color-mix(in srgb, var(--panel) 82%, transparent);
         border: 1px solid color-mix(in srgb, var(--edge) 80%, var(--amber) 20%);
@@ -247,7 +251,7 @@
       #spritedirs button { padding: 0.3rem 0.7rem; }
       #spritedirs button[aria-pressed='true'] { outline: 2px solid var(--amber); }
     </style>
-    <script type="module" crossorigin src="./assets/index-bB2-In8k.js"></script>
+    <script type="module" crossorigin src="./assets/index-CU-mZb0_.js"></script>
   </head>
   <body>
     <div class="wrap">
@@ -322,7 +326,10 @@
       </section>
 
       <div id="playwrap" hidden>
-        <canvas id="playcanvas"></canvas>
+        <div id="playstage">
+          <canvas id="playgl" hidden></canvas>
+          <canvas id="playcanvas"></canvas>
+        </div>
         <div id="scanlines" hidden></div>
         <div id="classicbar" hidden><canvas id="ifacecanvas"></canvas></div>
         <div id="optwrap" hidden><canvas id="optcanvas"></canvas></div>
@@ -370,7 +377,9 @@
               <button type="button" class="quiet" id="filtpixel">Crisp pixels</button>
               <button type="button" class="quiet" id="filtsmooth">Smoothed</button>
               <button type="button" class="quiet" id="filtscan">Scanlines</button>
+              <button type="button" class="quiet" id="filtgl">WebGL</button>
             </div>
+            <div class="note" id="glnote"></div>
             <div class="cardtitle" style="margin-top:0.6rem">Saves</div>
             <ul id="slotlist"></ul>
           </div>
