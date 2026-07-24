@@ -2,7 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="theme-color" content="#131009" />
     <title>Wasteland Workbench — DAT Inspector</title>
     <style>
       :root {
@@ -91,15 +95,50 @@
       #mapcard select { padding: 0.5rem 0.75rem; font: inherit; color: var(--text); background: var(--ground); border: 1px solid var(--edge); border-radius: 4px; }
       #mapwrap { overflow: auto; max-height: 70vh; border: 1px solid var(--edge); border-radius: 6px; margin-top: 0.75rem; }
       #mapcanvas { display: block; }
-      #playcanvas { display: block; width: 100%; height: 65vh; border: 1px solid var(--edge); border-radius: 6px; background: #000; touch-action: manipulation; image-rendering: pixelated; }
-      #questhud { margin-top: 0.6rem; padding: 0.6rem 0.9rem; border: 1px solid var(--edge); border-radius: 6px; background: var(--panel); font-size: 0.85rem; }
+      /* Walk mode is always fullscreen: fixed overlay, safe-area aware. */
+      body.playing { overflow: hidden; overscroll-behavior: none; }
+      #playwrap {
+        position: fixed; inset: 0; z-index: 40; background: #000;
+        display: flex; flex-direction: column;
+      }
+      #playcanvas { display: block; flex: 1; width: 100%; min-height: 0; background: #000; touch-action: manipulation; image-rendering: pixelated; }
+      .overlay {
+        position: absolute; z-index: 45; background: color-mix(in srgb, var(--panel) 88%, transparent);
+        border: 1px solid var(--edge); border-radius: 8px; padding: 0.5rem 0.8rem; font-size: 0.8rem;
+      }
+      #questhud { top: calc(env(safe-area-inset-top, 0px) + 8px); left: calc(env(safe-area-inset-left, 0px) + 8px); max-width: 62vw; }
+      #hphud { bottom: calc(env(safe-area-inset-bottom, 0px) + 8px); left: calc(env(safe-area-inset-left, 0px) + 8px); min-width: 150px; }
+      #playtopbar {
+        position: absolute; z-index: 45; top: calc(env(safe-area-inset-top, 0px) + 8px);
+        right: calc(env(safe-area-inset-right, 0px) + 8px); display: flex; gap: 0.5rem;
+      }
+      #playbotbar {
+        position: absolute; z-index: 45; bottom: calc(env(safe-area-inset-bottom, 0px) + 8px);
+        right: calc(env(safe-area-inset-right, 0px) + 8px); display: flex; gap: 0.5rem;
+      }
+      #playtopbar button, #playbotbar button { background: color-mix(in srgb, var(--panel) 92%, transparent); color: var(--amber); border: 1px solid var(--edge); }
+      #playstatus {
+        position: absolute; z-index: 44; bottom: calc(env(safe-area-inset-bottom, 0px) + 64px);
+        left: 50%; transform: translateX(-50%); max-width: 86vw; text-align: center;
+        color: var(--text); font-size: 0.78rem; text-shadow: 0 1px 3px #000;
+      }
+      #invpanel {
+        right: calc(env(safe-area-inset-right, 0px) + 8px); bottom: calc(env(safe-area-inset-bottom, 0px) + 56px);
+        width: min(320px, 86vw); max-height: 50vh; overflow-y: auto;
+      }
+      #invpanel ul { margin: 0.3rem 0 0; padding: 0; }
+      #dlgpanel {
+        left: 50%; bottom: calc(env(safe-area-inset-bottom, 0px) + 56px); transform: translateX(-50%);
+        width: min(420px, 90vw);
+      }
+      #dlgpanel button { margin-top: 0.5rem; }
       #preview { margin: 0; overflow-x: auto; white-space: pre; font-size: 0.8rem; line-height: 1.45; max-height: 40vh; overflow-y: auto; }
       #spritebox { display: flex; flex-direction: column; gap: 0.6rem; align-items: flex-start; margin-bottom: 0.75rem; }
       #spritecanvas { image-rendering: pixelated; background: #0c0a06; border: 1px solid var(--edge); border-radius: 4px; }
       #spritedirs button { padding: 0.3rem 0.7rem; }
       #spritedirs button[aria-pressed='true'] { outline: 2px solid var(--amber); }
     </style>
-    <script type="module" crossorigin src="./assets/index-Dupp4Nt6.js"></script>
+    <script type="module" crossorigin src="./assets/index-CFEtzM4K.js"></script>
   </head>
   <body>
     <div class="wrap">
@@ -155,12 +194,24 @@
       </div>
 
       <div id="playwrap" hidden>
-        <div class="cardtitle">Walk mode — tap to move, tap doors to open</div>
         <canvas id="playcanvas"></canvas>
-        <div id="questhud" hidden></div>
-        <div style="display: flex; gap: 0.75rem; align-items: center; margin-top: 0.6rem">
-          <button type="button" id="playexit" class="quiet">Exit walk mode</button>
-          <span class="note" id="playstatus"></span>
+        <div id="questhud" class="overlay" hidden></div>
+        <div id="hphud" class="overlay"></div>
+        <div id="playtopbar">
+          <button type="button" id="playexit">✕ exit</button>
+        </div>
+        <div id="playbotbar">
+          <button type="button" id="invbtn">⋔ gear</button>
+        </div>
+        <span id="playstatus"></span>
+        <div id="invpanel" class="overlay" hidden>
+          <div class="cardtitle" style="margin-bottom: 0.2rem">Gear</div>
+          <ul id="invlist"></ul>
+        </div>
+        <div id="dlgpanel" class="overlay" hidden>
+          <div class="cardtitle" id="dlgname" style="margin-bottom: 0.2rem"></div>
+          <div id="dlgtext"></div>
+          <button type="button" id="dlgclose" class="quiet">Leave</button>
         </div>
       </div>
 
