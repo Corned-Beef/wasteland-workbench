@@ -192,6 +192,17 @@
         mix-blend-mode: multiply;
       }
       #scanlines[hidden] { display: none; }
+      /* Loading overlay with a progress bar — shown while a map streams in. */
+      #loadoverlay {
+        position: absolute; inset: 0; z-index: 55; background: #0d0a06f2;
+        display: flex; align-items: center; justify-content: center; padding: 1rem;
+      }
+      #loadoverlay[hidden] { display: none; }
+      #loadbox { width: min(360px, 82vw); text-align: center; }
+      #loadtitle { color: var(--amber); font-size: 1rem; letter-spacing: 0.08em; margin-bottom: 0.7rem; }
+      #loadtrack { height: 12px; background: #000; border: 1px solid var(--edge); border-radius: 6px; overflow: hidden; }
+      #loadfill { height: 100%; width: 0%; border-radius: 6px; transition: width 250ms ease; background: linear-gradient(90deg, #6fa32f, var(--ok)); }
+      #loadstatus { margin-top: 0.55rem; min-height: 1.1em; }
       /* Day/night wash over the scene — colour set from the sim clock. */
       #nighttint {
         position: absolute; inset: 0; z-index: 42; pointer-events: none;
@@ -292,7 +303,7 @@
       #spritedirs button { padding: 0.3rem 0.7rem; }
       #spritedirs button[aria-pressed='true'] { outline: 2px solid var(--amber); }
     </style>
-    <script type="module" crossorigin src="./assets/index-DZzDVJHH.js"></script>
+    <script type="module" crossorigin src="./assets/index-fc5L0ca8.js"></script>
   </head>
   <body>
     <div class="wrap">
@@ -378,6 +389,13 @@
         </div>
         <div id="nighttint"></div>
         <div id="scanlines" hidden></div>
+        <div id="loadoverlay" hidden>
+          <div id="loadbox">
+            <div id="loadtitle">Loading…</div>
+            <div id="loadtrack"><div id="loadfill"></div></div>
+            <div class="note" id="loadstatus"></div>
+          </div>
+        </div>
         <div id="classicbar" hidden><canvas id="ifacecanvas"></canvas></div>
         <div id="optwrap" hidden><canvas id="optcanvas"></canvas></div>
         <div id="playtop">
