@@ -203,6 +203,17 @@
       #loadtrack { height: 12px; background: #000; border: 1px solid var(--edge); border-radius: 6px; overflow: hidden; }
       #loadfill { height: 100%; width: 0%; border-radius: 6px; transition: width 250ms ease; background: linear-gradient(90deg, #6fa32f, var(--ok)); }
       #loadstatus { margin-top: 0.55rem; min-height: 1.1em; }
+      /* "Leave the area?" confirmation shown when stepping onto an exit grid. */
+      #exitprompt {
+        position: absolute; inset: 0; z-index: 56; background: #0d0a06e0;
+        display: flex; align-items: center; justify-content: center; padding: 1rem;
+      }
+      #exitprompt[hidden] { display: none; }
+      #exitbox {
+        width: min(340px, 84vw); background: var(--panel); border: 1px solid var(--edge);
+        border-radius: 10px; padding: 0.9rem; text-align: center;
+      }
+      #exitbox button { display: block; width: 100%; margin-top: 0.5rem; min-height: 40px; }
       /* Day/night wash over the scene — colour set from the sim clock. */
       #nighttint {
         position: absolute; inset: 0; z-index: 42; pointer-events: none;
@@ -303,7 +314,7 @@
       #spritedirs button { padding: 0.3rem 0.7rem; }
       #spritedirs button[aria-pressed='true'] { outline: 2px solid var(--amber); }
     </style>
-    <script type="module" crossorigin src="./assets/index-CaQ_wf3e.js"></script>
+    <script type="module" crossorigin src="./assets/index-B2whROqQ.js"></script>
   </head>
   <body>
     <div class="wrap">
@@ -394,6 +405,15 @@
             <div id="loadtitle">Loading…</div>
             <div id="loadtrack"><div id="loadfill"></div></div>
             <div class="note" id="loadstatus"></div>
+          </div>
+        </div>
+        <div id="exitprompt" hidden>
+          <div id="exitbox">
+            <div class="cardtitle">Leave the area?</div>
+            <div class="note" id="exitnote" style="margin:0.3rem 0 0.7rem"></div>
+            <button type="button" id="exitgo">→ Continue on foot</button>
+            <button type="button" id="exitworld">🗺 World map</button>
+            <button type="button" id="exitstay" class="quiet">Stay here</button>
           </div>
         </div>
         <div id="classicbar" hidden><canvas id="ifacecanvas"></canvas></div>
