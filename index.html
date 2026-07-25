@@ -132,12 +132,14 @@
       #playgl[hidden] { display: none; }
       /* touch-action:none — the game handles its own taps and pinch-zoom */
       #playcanvas { position: absolute; inset: 0; display: block; width: 100%; height: 100%; background: transparent; z-index: 42; touch-action: none; image-rendering: pixelated; }
+      /* In-game chrome: dark bevelled metal + amber, like the original's
+         panels — square corners, no glass blur, monospace labels. */
       .overlay {
-        position: absolute; z-index: 45; background: color-mix(in srgb, var(--panel) 82%, transparent);
-        border: 1px solid color-mix(in srgb, var(--edge) 80%, var(--amber) 20%);
-        border-radius: 10px; padding: 0.55rem 0.85rem; font-size: 0.8rem;
-        backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-        box-shadow: 0 4px 18px #000c;
+        position: absolute; z-index: 45;
+        background: linear-gradient(180deg, #221b10, #171208);
+        border: 1px solid #0a0704;
+        box-shadow: inset 0 1px 0 #6b573255, inset 1px 0 0 #6b573233, inset 0 -1px 0 #000000aa, 0 3px 12px #000c;
+        border-radius: 4px; padding: 0.55rem 0.85rem; font-size: 0.8rem;
       }
       /* Top HUD is one flex row — quest chip, combat pill, buttons never overlap. */
       #playtop {
@@ -146,48 +148,63 @@
         display: flex; align-items: flex-start; gap: 0.5rem; pointer-events: none;
       }
       #playtop > * { pointer-events: auto; }
-      #questhud { position: static; max-width: min(48vw, 300px); cursor: pointer; }
+      #questhud { position: static; max-width: min(44vw, 300px); min-width: 0; overflow: hidden; text-overflow: ellipsis; cursor: pointer; }
       #combathud { position: static; margin-left: auto; white-space: nowrap; color: var(--amber); font-size: 0.82rem; align-self: center; }
-      #topbtns { margin-left: auto; display: flex; gap: 0.5rem; flex: none; }
-      #hphud { bottom: calc(env(safe-area-inset-bottom, 0px) + 8px); left: calc(env(safe-area-inset-left, 0px) + 8px); min-width: 168px; }
+      #topbtns { margin-left: auto; display: flex; gap: 0.35rem; flex: none; }
+      #topbtns button { padding: 0.5rem 0.6rem; }
+      /* Touch screens zoom by pinch and double-tap; the ± pills just eat width. */
+      @media (pointer: coarse) {
+        #zoomin, #zoomout { display: none; }
+      }
+      /* Bottom lanes, bottom-up: dock (8) → HP (60) → target bar (152) → status (204). */
+      #hphud { bottom: calc(env(safe-area-inset-bottom, 0px) + 60px); left: calc(env(safe-area-inset-left, 0px) + 8px); min-width: 168px; }
       #playbotbar {
         position: absolute; z-index: 45; bottom: calc(env(safe-area-inset-bottom, 0px) + 8px);
-        right: calc(env(safe-area-inset-right, 0px) + 8px); display: flex; gap: 0.5rem;
+        right: calc(env(safe-area-inset-right, 0px) + 8px);
+        left: calc(env(safe-area-inset-left, 0px) + 8px);
+        /* flex-start: anything that overflows goes right, where it can scroll */
+        display: flex; gap: 0.35rem; justify-content: flex-start;
+        flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none;
       }
-      #topbtns button, #playbotbar button {
-        background: color-mix(in srgb, var(--panel) 82%, transparent); color: var(--amber);
-        border: 1px solid var(--edge); border-radius: 999px;
-        padding: 0.55rem 0.95rem; min-height: 44px; min-width: 44px; font-size: 0.82rem;
-        backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-        box-shadow: 0 2px 10px #0009;
+      #playbotbar::-webkit-scrollbar { display: none; }
+      #playbotbar button { white-space: nowrap; flex: none; }
+      #topbtns button, #playbotbar button, #targetbar button, #ctxring button, #exitbox button {
+        background: linear-gradient(180deg, #2b2315, #191309);
+        color: var(--amber); border: 1px solid #0a0704; border-radius: 3px;
+        padding: 0.55rem 0.8rem; min-height: 44px; min-width: 44px; font-size: 0.78rem;
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        letter-spacing: 0.04em; text-transform: uppercase;
+        box-shadow: inset 0 1px 0 #6b573266, inset 0 -1px 0 #000000aa, 0 1px 4px #000b;
       }
-      #zoomin, #zoomout, #playexit { width: 44px; padding: 0; font-size: 1.05rem; line-height: 1; }
+      #topbtns button:active, #playbotbar button:active, #targetbar button:active, #ctxring button:active, #exitbox button:active {
+        background: linear-gradient(180deg, #171208, #241d10);
+        box-shadow: inset 0 1px 3px #000c;
+      }
+      #zoomin, #zoomout, #playexit, #elevbtn { width: 44px; padding: 0; font-size: 1rem; line-height: 1; text-transform: none; }
       /* Target action bar: quick follow-up attacks on the selected enemy. */
       #targetbar {
-        position: absolute; z-index: 45; bottom: calc(env(safe-area-inset-bottom, 0px) + 62px);
-        left: 50%; transform: translateX(-50%); display: flex; gap: 0.4rem; align-items: center;
-        max-width: 96vw; overflow-x: auto; padding: 0.2rem 0.4rem;
+        position: absolute; z-index: 45; bottom: calc(env(safe-area-inset-bottom, 0px) + 152px);
+        left: 50%; transform: translateX(-50%); display: flex; gap: 0.35rem; align-items: center;
+        max-width: 96vw; overflow-x: auto; scrollbar-width: none; padding: 0.2rem 0.4rem;
       }
+      #targetbar::-webkit-scrollbar { display: none; }
       #targetbar[hidden] { display: none; }
       #targetbar .tname {
-        color: #ff8d7a; font-size: 0.78rem; white-space: nowrap; padding-right: 0.2rem;
-        text-shadow: 0 1px 3px #000;
+        color: #ff8d7a; font-size: 0.75rem; white-space: nowrap; padding-right: 0.2rem;
+        font-family: ui-monospace, monospace; text-transform: uppercase; text-shadow: 0 1px 3px #000;
       }
-      #targetbar button {
-        flex: none; min-height: 44px; padding: 0.5rem 0.8rem; border-radius: 999px;
-        background: color-mix(in srgb, var(--panel) 88%, transparent); color: var(--amber);
-        border: 1px solid var(--amber); font-size: 0.82rem; box-shadow: 0 2px 10px #0009;
-        backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
-      }
+      #targetbar button { border-color: #5a4222; }
       #playbotbar #endturnbtn { background: var(--amber); color: var(--ground); font-weight: 600; }
+      /* Status line reads like the classic bar's monitor: green phosphor text. */
       #playstatus {
-        position: absolute; z-index: 44; bottom: calc(env(safe-area-inset-bottom, 0px) + 92px);
+        position: absolute; z-index: 44; bottom: calc(env(safe-area-inset-bottom, 0px) + 204px);
         left: 50%; transform: translateX(-50%); max-width: 86vw; text-align: center;
-        color: var(--text); font-size: 0.78rem;
-        background: color-mix(in srgb, var(--panel) 75%, transparent);
-        border: 1px solid color-mix(in srgb, var(--edge) 60%, transparent);
-        border-radius: 999px; padding: 0.3rem 0.9rem;
-        backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+        color: #3fd23f; font-size: 0.78rem;
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        background: linear-gradient(180deg, #131009ee, #0c0a06ee);
+        border: 1px solid #0a0704; border-radius: 3px; padding: 0.3rem 0.9rem;
+        box-shadow: inset 0 1px 0 #6b573233, inset 0 -1px 0 #00000088;
+        text-shadow: 0 0 6px #3fd23f44;
       }
       #playstatus:empty { display: none; }
       /* Classic interface: the original Fallout 2 bar docked below the map,
@@ -255,10 +272,11 @@
         #playstatus { font-size: 0.85rem; }
         #invlist li { min-height: 40px; }
       }
-      /* Short landscape (phone rotated): tuck chrome in to keep the view clear. */
+      /* Short landscape (phone rotated): tighten the bottom lanes. */
       @media (max-height: 450px) {
-        #playstatus { bottom: calc(env(safe-area-inset-bottom, 0px) + 4px); }
-        #targetbar { bottom: calc(env(safe-area-inset-bottom, 0px) + 52px); }
+        #hphud { bottom: calc(env(safe-area-inset-bottom, 0px) + 56px); }
+        #targetbar { bottom: calc(env(safe-area-inset-bottom, 0px) + 148px); }
+        #playstatus { bottom: calc(env(safe-area-inset-bottom, 0px) + 196px); }
         #invpanel { max-height: 78vh; }
       }
       /* Long-press context ring: action buttons around the tap point. */
@@ -266,10 +284,7 @@
       #ctxring[hidden] { display: none; }
       #ctxring button {
         position: absolute; transform: translate(-50%, -50%);
-        min-height: 44px; min-width: 44px; padding: 0.4rem 0.75rem; border-radius: 999px;
-        background: color-mix(in srgb, var(--panel) 92%, transparent); color: var(--amber);
-        border: 1px solid var(--amber); box-shadow: 0 2px 10px #000b;
-        backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); font-size: 0.8rem;
+        white-space: nowrap; text-transform: none;
       }
       /* Settings sheet (radio / display / saves) — works in both interfaces. */
       #setsheet {
@@ -356,7 +371,7 @@
       #spritedirs button { padding: 0.3rem 0.7rem; }
       #spritedirs button[aria-pressed='true'] { outline: 2px solid var(--amber); }
     </style>
-    <script type="module" crossorigin src="./assets/index-DfDCyWqI.js"></script>
+    <script type="module" crossorigin src="./assets/index-D1Cj6eq1.js"></script>
   </head>
   <body>
     <div class="wrap">
@@ -467,20 +482,19 @@
             <button type="button" id="zoomout" aria-label="zoom out">−</button>
             <button type="button" id="zoomin" aria-label="zoom in">+</button>
             <button type="button" id="elevbtn" aria-label="change floor" hidden>⇅</button>
-            <button type="button" id="worldbtn" aria-label="world map">🗺</button>
-            <button type="button" id="setbtn" aria-label="settings">⚙</button>
+            <button type="button" id="worldbtn" aria-label="world map">MAP</button>
+            <button type="button" id="setbtn" aria-label="settings">OPT</button>
             <button type="button" id="playexit" aria-label="exit">✕</button>
           </div>
         </div>
         <div id="hphud" class="overlay"></div>
         <div id="targetbar" hidden></div>
         <div id="playbotbar">
-          <button type="button" id="ffbtn" title="fast-forward" aria-pressed="false">» 1×</button>
-          <button type="button" id="fabtn" hidden>🩹</button>
-          <button type="button" id="reloadbtn" hidden>⟳ reload</button>
-          <button type="button" id="endturnbtn" hidden>⌛ end turn</button>
-          <button type="button" id="invbtn">⋔ gear</button>
-          <button type="button" id="uibtn" title="switch to the original interface">▤ classic</button>
+          <button type="button" id="endturnbtn" hidden>END TURN</button>
+          <button type="button" id="fabtn" hidden>AID</button>
+          <button type="button" id="reloadbtn" hidden>RELOAD</button>
+          <button type="button" id="invbtn">GEAR</button>
+          <button type="button" id="ffbtn" title="fast-forward" aria-pressed="false">1×</button>
         </div>
         <span id="playstatus"></span>
         <div id="ctxring" hidden></div>
@@ -522,6 +536,7 @@
               <button type="button" class="quiet" id="filtscan">Scanlines</button>
               <button type="button" class="quiet" id="filtgl">WebGL</button>
               <button type="button" class="quiet" id="filtbattery">Battery saver</button>
+              <button type="button" class="quiet" id="uibtn" title="switch to the original interface">Classic interface</button>
             </div>
             <div class="note" id="glnote"></div>
             <div class="cardtitle" style="margin-top:0.6rem">Trainer</div>
