@@ -192,6 +192,11 @@
         mix-blend-mode: multiply;
       }
       #scanlines[hidden] { display: none; }
+      /* Day/night wash over the scene — colour set from the sim clock. */
+      #nighttint {
+        position: absolute; inset: 0; z-index: 42; pointer-events: none;
+        background: transparent; transition: background-color 1.2s ease;
+      }
       /* Long-press context ring: action buttons around the tap point. */
       #ctxring { position: absolute; z-index: 47; }
       #ctxring[hidden] { display: none; }
@@ -287,7 +292,7 @@
       #spritedirs button { padding: 0.3rem 0.7rem; }
       #spritedirs button[aria-pressed='true'] { outline: 2px solid var(--amber); }
     </style>
-    <script type="module" crossorigin src="./assets/index-D2N5BdZ0.js"></script>
+    <script type="module" crossorigin src="./assets/index-DDpCM1g8.js"></script>
   </head>
   <body>
     <div class="wrap">
@@ -371,6 +376,7 @@
           <canvas id="playgl" hidden></canvas>
           <canvas id="playcanvas"></canvas>
         </div>
+        <div id="nighttint"></div>
         <div id="scanlines" hidden></div>
         <div id="classicbar" hidden><canvas id="ifacecanvas"></canvas></div>
         <div id="optwrap" hidden><canvas id="optcanvas"></canvas></div>
