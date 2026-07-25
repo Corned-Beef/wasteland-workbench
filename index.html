@@ -208,6 +208,17 @@
         display: flex; align-items: center; justify-content: center; padding: 1rem;
       }
       #setsheet[hidden] { display: none; }
+      #worldmap {
+        position: absolute; inset: 0; z-index: 48; background: #000c;
+        display: flex; align-items: center; justify-content: center; padding: 1rem;
+      }
+      #worldmap[hidden] { display: none; }
+      #worldpanel {
+        width: min(560px, 94vw); max-height: 88vh; display: flex; flex-direction: column; gap: 0.5rem;
+        background: var(--panel); border: 1px solid var(--edge); border-radius: 10px; padding: 0.7rem;
+      }
+      #worldcanvaswrap { width: 100%; aspect-ratio: 4 / 3; background: #1a140c; border-radius: 8px; overflow: hidden; }
+      #worldcanvas { display: block; width: 100%; height: 100%; touch-action: manipulation; image-rendering: pixelated; }
       #setpanel { position: static; width: min(420px, 92vw); max-height: 84vh; overflow-y: auto; }
       .setrow { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
       .setrow .cardtitle { flex: 1; margin: 0; }
@@ -257,7 +268,7 @@
       #spritedirs button { padding: 0.3rem 0.7rem; }
       #spritedirs button[aria-pressed='true'] { outline: 2px solid var(--amber); }
     </style>
-    <script type="module" crossorigin src="./assets/index-DcHoAkxK.js"></script>
+    <script type="module" crossorigin src="./assets/index-j1RCmyz9.js"></script>
   </head>
   <body>
     <div class="wrap">
@@ -345,6 +356,7 @@
           <div id="topbtns">
             <button type="button" id="zoomout" aria-label="zoom out">−</button>
             <button type="button" id="zoomin" aria-label="zoom in">+</button>
+            <button type="button" id="worldbtn" aria-label="world map">🗺</button>
             <button type="button" id="setbtn" aria-label="settings">⚙</button>
             <button type="button" id="playexit" aria-label="exit">✕</button>
           </div>
@@ -359,6 +371,13 @@
         </div>
         <span id="playstatus"></span>
         <div id="ctxring" hidden></div>
+        <div id="worldmap" hidden>
+          <div id="worldpanel">
+            <div class="setrow"><span class="cardtitle">World Map <span id="worldday" class="note"></span></span><button type="button" id="worldclose" class="quiet">Close</button></div>
+            <div id="worldcanvaswrap"><canvas id="worldcanvas"></canvas></div>
+            <div id="worldnote" class="note">Tap a location to travel. Time passes on the road.</div>
+          </div>
+        </div>
         <div id="invpanel" class="overlay" hidden>
           <div class="cardtitle" style="margin-bottom: 0.2rem">Gear</div>
           <ul id="invlist"></ul>
