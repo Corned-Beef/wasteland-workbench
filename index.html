@@ -7,6 +7,9 @@
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="theme-color" content="#131009" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="./icon-180.png" />
+    <link rel="icon" type="image/png" href="./icon-192.png" />
     <title>Wasteland Workbench — DAT Inspector</title>
     <style>
       :root {
@@ -154,11 +157,28 @@
       #topbtns button, #playbotbar button {
         background: color-mix(in srgb, var(--panel) 82%, transparent); color: var(--amber);
         border: 1px solid var(--edge); border-radius: 999px;
-        padding: 0.55rem 0.95rem; min-height: 42px; font-size: 0.82rem;
+        padding: 0.55rem 0.95rem; min-height: 44px; min-width: 44px; font-size: 0.82rem;
         backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
         box-shadow: 0 2px 10px #0009;
       }
-      #zoomin, #zoomout, #playexit { width: 42px; padding: 0; font-size: 1.05rem; line-height: 1; }
+      #zoomin, #zoomout, #playexit { width: 44px; padding: 0; font-size: 1.05rem; line-height: 1; }
+      /* Target action bar: quick follow-up attacks on the selected enemy. */
+      #targetbar {
+        position: absolute; z-index: 45; bottom: calc(env(safe-area-inset-bottom, 0px) + 62px);
+        left: 50%; transform: translateX(-50%); display: flex; gap: 0.4rem; align-items: center;
+        max-width: 96vw; overflow-x: auto; padding: 0.2rem 0.4rem;
+      }
+      #targetbar[hidden] { display: none; }
+      #targetbar .tname {
+        color: #ff8d7a; font-size: 0.78rem; white-space: nowrap; padding-right: 0.2rem;
+        text-shadow: 0 1px 3px #000;
+      }
+      #targetbar button {
+        flex: none; min-height: 44px; padding: 0.5rem 0.8rem; border-radius: 999px;
+        background: color-mix(in srgb, var(--panel) 88%, transparent); color: var(--amber);
+        border: 1px solid var(--amber); font-size: 0.82rem; box-shadow: 0 2px 10px #0009;
+        backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+      }
       #playbotbar #endturnbtn { background: var(--amber); color: var(--ground); font-weight: 600; }
       #playstatus {
         position: absolute; z-index: 44; bottom: calc(env(safe-area-inset-bottom, 0px) + 92px);
@@ -203,6 +223,15 @@
       #loadtrack { height: 12px; background: #000; border: 1px solid var(--edge); border-radius: 6px; overflow: hidden; }
       #loadfill { height: 100%; width: 0%; border-radius: 6px; transition: width 250ms ease; background: linear-gradient(90deg, #6fa32f, var(--ok)); }
       #loadstatus { margin-top: 0.55rem; min-height: 1.1em; }
+      /* One-time iOS "Add to Home Screen" hint. */
+      #a2hshint {
+        position: fixed; left: 50%; transform: translateX(-50%); z-index: 70;
+        bottom: calc(env(safe-area-inset-bottom, 0px) + 12px);
+        display: flex; align-items: center; gap: 0.7rem; max-width: 92vw;
+        background: var(--panel); border: 1px solid var(--amber); border-radius: 10px;
+        padding: 0.6rem 0.8rem; font-size: 0.82rem; box-shadow: 0 4px 16px #000c;
+      }
+      #a2hshint button { min-width: 40px; min-height: 40px; background: none; border: none; color: var(--amber); font-size: 1rem; }
       /* "Leave the area?" confirmation shown when stepping onto an exit grid. */
       #exitprompt {
         position: absolute; inset: 0; z-index: 56; background: #0d0a06e0;
@@ -219,12 +248,25 @@
         position: absolute; inset: 0; z-index: 42; pointer-events: none;
         background: transparent; transition: background-color 1.2s ease;
       }
+      /* Phone-size type bump: dialog and status text get a readable size. */
+      @media (max-width: 520px) {
+        #dlgtext { font-size: 1rem; line-height: 1.45; }
+        #dlgopts li { font-size: 0.95rem; padding: 0.55rem 0.4rem; }
+        #playstatus { font-size: 0.85rem; }
+        #invlist li { min-height: 40px; }
+      }
+      /* Short landscape (phone rotated): tuck chrome in to keep the view clear. */
+      @media (max-height: 450px) {
+        #playstatus { bottom: calc(env(safe-area-inset-bottom, 0px) + 4px); }
+        #targetbar { bottom: calc(env(safe-area-inset-bottom, 0px) + 52px); }
+        #invpanel { max-height: 78vh; }
+      }
       /* Long-press context ring: action buttons around the tap point. */
       #ctxring { position: absolute; z-index: 47; }
       #ctxring[hidden] { display: none; }
       #ctxring button {
         position: absolute; transform: translate(-50%, -50%);
-        min-height: 40px; padding: 0.4rem 0.7rem; border-radius: 999px;
+        min-height: 44px; min-width: 44px; padding: 0.4rem 0.75rem; border-radius: 999px;
         background: color-mix(in srgb, var(--panel) 92%, transparent); color: var(--amber);
         border: 1px solid var(--amber); box-shadow: 0 2px 10px #000b;
         backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); font-size: 0.8rem;
@@ -314,7 +356,7 @@
       #spritedirs button { padding: 0.3rem 0.7rem; }
       #spritedirs button[aria-pressed='true'] { outline: 2px solid var(--amber); }
     </style>
-    <script type="module" crossorigin src="./assets/index-B2whROqQ.js"></script>
+    <script type="module" crossorigin src="./assets/index-j5gcLi8q.js"></script>
   </head>
   <body>
     <div class="wrap">
@@ -431,8 +473,10 @@
           </div>
         </div>
         <div id="hphud" class="overlay"></div>
+        <div id="targetbar" hidden></div>
         <div id="playbotbar">
           <button type="button" id="ffbtn" title="fast-forward" aria-pressed="false">» 1×</button>
+          <button type="button" id="fabtn" hidden>🩹</button>
           <button type="button" id="reloadbtn" hidden>⟳ reload</button>
           <button type="button" id="endturnbtn" hidden>⌛ end turn</button>
           <button type="button" id="invbtn">⋔ gear</button>
@@ -477,6 +521,7 @@
               <button type="button" class="quiet" id="filtsmooth">Smoothed</button>
               <button type="button" class="quiet" id="filtscan">Scanlines</button>
               <button type="button" class="quiet" id="filtgl">WebGL</button>
+              <button type="button" class="quiet" id="filtbattery">Battery saver</button>
             </div>
             <div class="note" id="glnote"></div>
             <div class="cardtitle" style="margin-top:0.6rem">Trainer</div>
