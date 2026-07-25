@@ -213,6 +213,25 @@
         display: flex; align-items: center; justify-content: center; padding: 1rem;
       }
       #worldmap[hidden] { display: none; }
+      /* Character creation overlay — reachable from the landing screen. */
+      #charcreate {
+        position: fixed; inset: 0; z-index: 60; background: #000c;
+        display: flex; align-items: center; justify-content: center; padding: 1rem;
+      }
+      #charcreate[hidden] { display: none; }
+      #charpanel { position: static; width: min(460px, 94vw); max-height: 90vh; overflow-y: auto; }
+      #charpanel ul { list-style: none; margin: 0.3rem 0 0; padding: 0; display: flex; flex-direction: column; gap: 0.3rem; }
+      #charpanel li { display: flex; gap: 0.6rem; align-items: center; }
+      #specialrows li .sname { flex: 1; }
+      #specialrows li .sval { min-width: 1.5rem; text-align: center; color: var(--amber); font-variant-numeric: tabular-nums; }
+      #specialrows button, #tagrows button, #traitrows button { min-width: 2rem; min-height: 30px; }
+      #tagrows li, #traitrows li {
+        padding: 0.35rem 0.5rem; border: 1px solid var(--edge); border-radius: 6px; cursor: pointer; flex-wrap: wrap;
+      }
+      #tagrows li[aria-pressed='true'], #traitrows li[aria-pressed='true'] { border-color: var(--amber); color: var(--amber); }
+      #tagrows li[aria-disabled='true'], #traitrows li[aria-disabled='true'] { opacity: 0.45; }
+      #traitrows li .tdesc { flex-basis: 100%; }
+      #charcard { margin-bottom: 0.6rem; }
       #worldpanel {
         width: min(560px, 94vw); max-height: 88vh; display: flex; flex-direction: column; gap: 0.5rem;
         background: var(--panel); border: 1px solid var(--edge); border-radius: 10px; padding: 0.7rem;
@@ -268,7 +287,7 @@
       #spritedirs button { padding: 0.3rem 0.7rem; }
       #spritedirs button[aria-pressed='true'] { outline: 2px solid var(--amber); }
     </style>
-    <script type="module" crossorigin src="./assets/index-CxDCsLAk.js"></script>
+    <script type="module" crossorigin src="./assets/index-DPHNmkTI.js"></script>
   </head>
   <body>
     <div class="wrap">
@@ -291,6 +310,11 @@
           <div class="cardtitle">Saved game</div>
           <div class="note" id="continuenote" style="margin-top: 0"></div>
           <button type="button" id="continuebtn">▶ Continue</button>
+        </div>
+        <div id="charcard">
+          <div class="cardtitle">Your character</div>
+          <div class="note" id="charnote" style="margin-top: 0"></div>
+          <button type="button" id="chareditbtn" class="quiet">✎ Build character</button>
         </div>
         <div id="mapcard" hidden>
           <div class="cardtitle">Walk a map</div>
@@ -414,6 +438,20 @@
             <div class="cardtitle" style="margin-top:0.6rem">Saves</div>
             <ul id="slotlist"></ul>
           </div>
+        </div>
+      </div>
+
+      <div id="charcreate" hidden>
+        <div id="charpanel" class="overlay">
+          <div class="setrow"><span class="cardtitle">Create your character</span><button type="button" id="charcancel" class="quiet">Cancel</button></div>
+          <div class="note" id="charpool" style="margin-top:0"></div>
+          <div class="cardtitle" style="margin-top:0.6rem">SPECIAL</div>
+          <ul id="specialrows"></ul>
+          <div class="cardtitle" style="margin-top:0.6rem">Tag skills <span class="note">(pick three)</span></div>
+          <ul id="tagrows"></ul>
+          <div class="cardtitle" style="margin-top:0.6rem">Traits <span class="note">(optional, up to two)</span></div>
+          <ul id="traitrows"></ul>
+          <button type="button" id="charsave" style="margin-top:0.7rem">Save build</button>
         </div>
       </div>
 
