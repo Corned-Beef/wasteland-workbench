@@ -278,6 +278,22 @@
       }
       #elevbox button { display: block; width: 100%; margin-top: 0.5rem; min-height: 40px; }
       #elevbox button.here { opacity: 0.5; }
+      /* Quest beat banner */
+      #questtoast {
+        position: absolute; top: 18%; left: 50%; transform: translateX(-50%);
+        z-index: 57; pointer-events: none; max-width: 88vw; text-align: center;
+        background: #0f0c07f0; border: 1px solid var(--amber); border-radius: 8px;
+        color: var(--amber); font-weight: 700; letter-spacing: 0.06em;
+        padding: 0.6rem 1.1rem; opacity: 0;
+      }
+      #questtoast.show { animation: toastin 3.2s ease forwards; }
+      @keyframes toastin {
+        0% { opacity: 0; transform: translateX(-50%) translateY(8px); }
+        8% { opacity: 1; transform: translateX(-50%) translateY(0); }
+        80% { opacity: 1; }
+        100% { opacity: 0; }
+      }
+      #questtoast[hidden] { display: none; }
       /* Scenario briefing */
       #briefing {
         position: fixed; inset: 0; z-index: 58; background: #0d0a06ee;
@@ -461,7 +477,7 @@
       #spritedirs button { padding: 0.3rem 0.7rem; }
       #spritedirs button[aria-pressed='true'] { outline: 2px solid var(--amber); }
     </style>
-    <script type="module" crossorigin src="./assets/index-Yo2IgYB_.js"></script>
+    <script type="module" crossorigin src="./assets/index-C8f9iRkJ.js"></script>
   </head>
   <body>
     <div class="wrap">
@@ -583,6 +599,7 @@
             <button type="button" id="elevstay" class="quiet">Stay here</button>
           </div>
         </div>
+        <div id="questtoast" hidden></div>
         <div id="pipboy" hidden>
           <div id="pipbox">
             <div class="setrow"><span class="cardtitle">PIP-Boy · Quests</span><button type="button" id="pipclose" class="quiet">Close</button></div>
