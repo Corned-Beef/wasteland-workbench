@@ -270,6 +270,32 @@
       }
       #elevbox button { display: block; width: 100%; margin-top: 0.5rem; min-height: 40px; }
       #elevbox button.here { opacity: 0.5; }
+      /* PIP-Boy quest log */
+      #pipboy {
+        position: absolute; inset: 0; z-index: 56; background: #0d0a06e0;
+        display: flex; align-items: center; justify-content: center; padding: 1rem;
+      }
+      #pipboy[hidden] { display: none; }
+      #pipbox {
+        width: min(430px, 92vw); max-height: 82vh; overflow-y: auto;
+        background: var(--panel); border: 1px solid var(--edge);
+        border-radius: 10px; padding: 0.9rem;
+      }
+      #piplist .piploc { color: var(--amber); margin: 0.6rem 0 0.2rem; font-weight: 600; }
+      #piplist .pipquest { margin: 0.15rem 0; font-size: 0.86rem; }
+      #piplist .pipquest.done { opacity: 0.6; text-decoration: line-through; }
+      /* Movie player — full-screen letterboxed cutscene */
+      #moviewrap {
+        position: fixed; inset: 0; z-index: 70; background: #000;
+        display: flex; align-items: center; justify-content: center;
+      }
+      #moviewrap[hidden] { display: none; }
+      #moviecanvas { max-width: 100vw; max-height: 100vh; width: 100%; object-fit: contain; image-rendering: pixelated; }
+      #moviestatus { position: absolute; top: 50%; left: 0; right: 0; text-align: center; color: #8a7a58; font-size: 0.85rem; pointer-events: none; }
+      #movieskip {
+        position: absolute; bottom: calc(0.9rem + env(safe-area-inset-bottom)); right: 1.1rem;
+        color: #8a7a58; font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; pointer-events: none;
+      }
       /* Day/night wash over the scene — colour set from the sim clock. */
       #nighttint {
         position: absolute; inset: 0; z-index: 42; pointer-events: none;
@@ -414,7 +440,7 @@
       #spritedirs button { padding: 0.3rem 0.7rem; }
       #spritedirs button[aria-pressed='true'] { outline: 2px solid var(--amber); }
     </style>
-    <script type="module" crossorigin src="./assets/index-B17S5lJS.js"></script>
+    <script type="module" crossorigin src="./assets/index-Bxt8KNdZ.js"></script>
   </head>
   <body>
     <div class="wrap">
@@ -521,6 +547,12 @@
             <div class="cardtitle">Elevator</div>
             <div id="elevlevels"></div>
             <button type="button" id="elevstay" class="quiet">Stay here</button>
+          </div>
+        </div>
+        <div id="pipboy" hidden>
+          <div id="pipbox">
+            <div class="setrow"><span class="cardtitle">PIP-Boy · Quests</span><button type="button" id="pipclose" class="quiet">Close</button></div>
+            <div id="piplist"></div>
           </div>
         </div>
         <div id="classicbar" hidden><canvas id="ifacecanvas"></canvas></div>
@@ -638,6 +670,11 @@
       <footer>
         Game data streams from your private pack on demand — no game content ships with this page.
       </footer>
+    </div>
+    <div id="moviewrap" hidden>
+      <canvas id="moviecanvas"></canvas>
+      <div id="moviestatus"></div>
+      <div id="movieskip">tap to skip</div>
     </div>
   </body>
 </html>
