@@ -333,6 +333,19 @@
       #worldcanvaswrap { width: 100%; aspect-ratio: 4 / 3; background: #1a140c; border-radius: 8px; overflow: hidden; }
       #worldcanvas { display: block; width: 100%; height: 100%; touch-action: manipulation; image-rendering: pixelated; }
       #setpanel { position: static; width: min(420px, 92vw); max-height: 84vh; overflow-y: auto; }
+      /* Options menu: stacked entries, each opening its own page. */
+      #setmenu { display: flex; flex-direction: column; gap: 0.45rem; margin-top: 0.7rem; }
+      #setmenu button {
+        display: block; width: 100%; min-height: 52px; text-align: center;
+        background: #14100acc; color: #e6b054; border: 1px solid #453619; border-radius: 3px;
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 0.82rem; letter-spacing: 0.12em; text-transform: uppercase;
+      }
+      #setmenu button:active { background: #241c0e; border-color: #6b5223; }
+      .setsection[hidden] { display: none; }
+      .setsection { margin-top: 0.7rem; }
+      #settitle { text-align: center; }
+      #setback { min-width: 72px; }
       .setrow { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
       .setrow .cardtitle { flex: 1; margin: 0; }
       #setpanel button.quiet[aria-pressed='true'] { background: var(--amber); color: var(--ground); }
@@ -385,7 +398,7 @@
       #spritedirs button { padding: 0.3rem 0.7rem; }
       #spritedirs button[aria-pressed='true'] { outline: 2px solid var(--amber); }
     </style>
-    <script type="module" crossorigin src="./assets/index--N1hO4MZ.js"></script>
+    <script type="module" crossorigin src="./assets/index-t3Y7pply.js"></script>
   </head>
   <body>
     <div class="wrap">
@@ -534,37 +547,51 @@
         </div>
         <div id="setsheet" hidden>
           <div id="setpanel" class="overlay">
-            <div class="setrow"><span class="cardtitle">Settings</span><button type="button" id="setclose" class="quiet">Done</button></div>
-            <div class="cardtitle" style="margin-top:0.6rem">Radio</div>
-            <div class="setrow" id="radiomodes">
-              <button type="button" class="quiet" data-radio="map">Follow map</button>
-              <button type="button" class="quiet" data-radio="shuffle">Shuffle</button>
-              <button type="button" class="quiet" data-radio="off">Off</button>
-            </div>
-            <ul id="radiolist"></ul>
-            <div class="cardtitle" style="margin-top:0.6rem">Display</div>
             <div class="setrow">
-              <button type="button" class="quiet" id="filtpixel">Crisp pixels</button>
-              <button type="button" class="quiet" id="filtsmooth">Smoothed</button>
-              <button type="button" class="quiet" id="filtscan">Scanlines</button>
-              <button type="button" class="quiet" id="filtgl">WebGL</button>
-              <button type="button" class="quiet" id="filtbattery">Battery saver</button>
-              <button type="button" class="quiet" id="uibtn" title="switch to the original interface">Classic interface</button>
+              <button type="button" id="setback" class="quiet" hidden>‹ Back</button>
+              <span class="cardtitle" id="settitle">Options</span>
+              <button type="button" id="setclose" class="quiet">Done</button>
             </div>
-            <div class="note" id="glnote"></div>
-            <div class="cardtitle" style="margin-top:0.6rem">Trainer</div>
-            <div class="setrow" id="trainertoggles">
-              <button type="button" class="quiet" data-cheat="infiniteAp">Unlimited AP</button>
-              <button type="button" class="quiet" data-cheat="invincible">Damage immunity</button>
+            <div id="setmenu">
+              <button type="button" data-menu="radio">Radio</button>
+              <button type="button" data-menu="display">Display</button>
+              <button type="button" data-menu="trainer">Trainer</button>
+              <button type="button" data-menu="saves">Saves</button>
             </div>
-            <div class="setrow" id="trainergrants">
-              <button type="button" class="quiet" data-grant="xp">+1000 XP</button>
-              <button type="button" class="quiet" data-grant="caps">+500 caps</button>
+            <div class="setsection" data-section="radio" hidden>
+              <div class="setrow" id="radiomodes">
+                <button type="button" class="quiet" data-radio="map">Follow map</button>
+                <button type="button" class="quiet" data-radio="shuffle">Shuffle</button>
+                <button type="button" class="quiet" data-radio="off">Off</button>
+              </div>
+              <ul id="radiolist"></ul>
             </div>
-            <div class="note" style="margin:0.2rem 0">Add to loadout:</div>
-            <div class="setrow" id="traineritems"></div>
-            <div class="cardtitle" style="margin-top:0.6rem">Saves</div>
-            <ul id="slotlist"></ul>
+            <div class="setsection" data-section="display" hidden>
+              <div class="setrow">
+                <button type="button" class="quiet" id="filtpixel">Crisp pixels</button>
+                <button type="button" class="quiet" id="filtsmooth">Smoothed</button>
+                <button type="button" class="quiet" id="filtscan">Scanlines</button>
+                <button type="button" class="quiet" id="filtgl">WebGL</button>
+                <button type="button" class="quiet" id="filtbattery">Battery saver</button>
+                <button type="button" class="quiet" id="uibtn" title="switch to the original interface">Classic interface</button>
+              </div>
+              <div class="note" id="glnote"></div>
+            </div>
+            <div class="setsection" data-section="trainer" hidden>
+              <div class="setrow" id="trainertoggles">
+                <button type="button" class="quiet" data-cheat="infiniteAp">Unlimited AP</button>
+                <button type="button" class="quiet" data-cheat="invincible">Damage immunity</button>
+              </div>
+              <div class="setrow" id="trainergrants">
+                <button type="button" class="quiet" data-grant="xp">+1000 XP</button>
+                <button type="button" class="quiet" data-grant="caps">+500 caps</button>
+              </div>
+              <div class="note" style="margin:0.2rem 0">Add to loadout:</div>
+              <div class="setrow" id="traineritems"></div>
+            </div>
+            <div class="setsection" data-section="saves" hidden>
+              <ul id="slotlist"></ul>
+            </div>
           </div>
         </div>
       </div>
