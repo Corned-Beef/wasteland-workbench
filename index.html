@@ -28,7 +28,13 @@
         background: var(--ground);
         color: var(--text);
         font: 14px/1.6 ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+        /* no browser double-tap zoom anywhere — the game has its own pinch */
+        touch-action: manipulation;
       }
+      /* in-game, nothing is selectable text (double-taps were selecting the
+       * HUD); inputs stay editable for the token form and save names */
+      body.playing, body.playing * { -webkit-user-select: none; user-select: none; }
+      input, textarea { -webkit-user-select: text; user-select: text; }
       .wrap { max-width: 760px; margin: 0 auto; padding: 2.5rem 1.25rem 4rem; display: flex; flex-direction: column; gap: 1.25rem; }
       header { border-bottom: 1px solid var(--edge); padding-bottom: 1.25rem; }
       #tabs { display: flex; gap: 0.25rem; border-bottom: 1px solid var(--edge); }
@@ -442,7 +448,7 @@
       #spritedirs button { padding: 0.3rem 0.7rem; }
       #spritedirs button[aria-pressed='true'] { outline: 2px solid var(--amber); }
     </style>
-    <script type="module" crossorigin src="./assets/index-BIsqkZa_.js"></script>
+    <script type="module" crossorigin src="./assets/index-UxVgEuGm.js"></script>
   </head>
   <body>
     <div class="wrap">
@@ -472,6 +478,10 @@
             <button type="button" id="story2">☢ New game — Fallout 2</button>
             <button type="button" id="story1" class="quiet">🔦 New game — Fallout 1</button>
             <button type="button" id="randombtn" class="quiet">🎲 Random expedition</button>
+            <div style="display:flex; gap:0.5rem">
+              <select id="scenariosel" aria-label="scenario" style="flex:1"></select>
+              <button type="button" id="scenariogo" class="quiet">📜 Play</button>
+            </div>
           </div>
           <div class="note" style="margin-bottom:0">Story mode builds your character, rolls the intro, and drops you at the start of the road. Expeditions land your current hero on a random stretch of wasteland crawling with hostiles.</div>
         </div>
