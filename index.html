@@ -337,6 +337,10 @@
       #tagrows li[aria-pressed='true'], #traitrows li[aria-pressed='true'] { border-color: var(--amber); color: var(--amber); }
       #tagrows li[aria-disabled='true'], #traitrows li[aria-disabled='true'] { opacity: 0.45; }
       #traitrows li .tdesc { flex-basis: 100%; }
+      #perkrows li { display: flex; gap: 0.4rem; align-items: center; flex-wrap: wrap; padding: 0.15rem 0; }
+      #perkrows li .itname { flex: 1; }
+      #perkrows li .pdesc { flex-basis: 100%; }
+      #perkrows button { min-width: 3rem; min-height: 30px; }
       #charcard { margin-bottom: 0.6rem; }
       #worldpanel {
         width: min(560px, 94vw); max-height: 88vh; display: flex; flex-direction: column; gap: 0.5rem;
@@ -410,7 +414,7 @@
       #spritedirs button { padding: 0.3rem 0.7rem; }
       #spritedirs button[aria-pressed='true'] { outline: 2px solid var(--amber); }
     </style>
-    <script type="module" crossorigin src="./assets/index-CjGDJMBM.js"></script>
+    <script type="module" crossorigin src="./assets/index-B17S5lJS.js"></script>
   </head>
   <body>
     <div class="wrap">
@@ -434,11 +438,6 @@
           <div class="note" id="continuenote" style="margin-top: 0"></div>
           <button type="button" id="continuebtn">▶ Continue</button>
         </div>
-        <div id="charcard">
-          <div class="cardtitle">Your character</div>
-          <div class="note" id="charnote" style="margin-top: 0"></div>
-          <button type="button" id="chareditbtn" class="quiet">✎ Build character</button>
-        </div>
         <div id="mapcard" hidden>
           <div class="cardtitle">Walk a map</div>
           <div class="fields">
@@ -455,6 +454,11 @@
           </div>
           <div class="note" id="mapstatus"></div>
           <div id="mapwrap" hidden><canvas id="mapcanvas"></canvas></div>
+        </div>
+        <div id="charcard">
+          <div class="cardtitle">Your character</div>
+          <div class="note" id="charnote" style="margin-top: 0"></div>
+          <button type="button" id="chareditbtn" class="quiet">✎ Build character</button>
         </div>
       </section>
 
@@ -617,7 +621,7 @@
 
       <div id="charcreate" hidden>
         <div id="charpanel" class="overlay">
-          <div class="setrow"><span class="cardtitle">Create your character</span><button type="button" id="charcancel" class="quiet">Cancel</button></div>
+          <div class="setrow"><span class="cardtitle" id="chartitle">Create your character</span><button type="button" id="charcancel" class="quiet">Close</button></div>
           <div class="note" id="charpool" style="margin-top:0"></div>
           <div class="cardtitle" style="margin-top:0.6rem">SPECIAL</div>
           <ul id="specialrows"></ul>
@@ -625,6 +629,8 @@
           <ul id="tagrows"></ul>
           <div class="cardtitle" style="margin-top:0.6rem">Traits <span class="note">(optional, up to two)</span></div>
           <ul id="traitrows"></ul>
+          <div class="cardtitle" style="margin-top:0.6rem">Perks</div>
+          <ul id="perkrows"></ul>
           <button type="button" id="charsave" style="margin-top:0.7rem">Save build</button>
         </div>
       </div>
