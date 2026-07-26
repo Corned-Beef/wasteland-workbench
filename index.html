@@ -106,6 +106,8 @@
       #list li.click:hover { background: color-mix(in srgb, var(--amber) 12%, transparent); }
       #previewwrap { border: 1px solid var(--edge); border-radius: 6px; background: var(--panel); padding: 1rem 1.25rem; }
       #mapcard { border: 1px solid var(--edge); border-radius: 6px; background: var(--panel); padding: 1.25rem 1.5rem; }
+      #storycard { border: 1px solid var(--amber); border-radius: 6px; background: var(--panel); padding: 1.25rem 1.5rem; margin-bottom: 0.6rem; }
+      #storycard button { min-height: 44px; font-weight: 600; }
       #mapcard select { padding: 0.5rem 0.75rem; font: inherit; color: var(--text); background: var(--ground); border: 1px solid var(--edge); border-radius: 4px; }
       #mapwrap { overflow: auto; max-height: 70vh; border: 1px solid var(--edge); border-radius: 6px; margin-top: 0.75rem; }
       #mapcanvas { display: block; }
@@ -440,7 +442,7 @@
       #spritedirs button { padding: 0.3rem 0.7rem; }
       #spritedirs button[aria-pressed='true'] { outline: 2px solid var(--amber); }
     </style>
-    <script type="module" crossorigin src="./assets/index-Bxt8KNdZ.js"></script>
+    <script type="module" crossorigin src="./assets/index-rNn-Gr4S.js"></script>
   </head>
   <body>
     <div class="wrap">
@@ -464,8 +466,17 @@
           <div class="note" id="continuenote" style="margin-top: 0"></div>
           <button type="button" id="continuebtn">▶ Continue</button>
         </div>
+        <div id="storycard" hidden>
+          <div class="cardtitle">Play</div>
+          <div style="display:flex; flex-direction:column; gap:0.5rem; margin-top:0.4rem">
+            <button type="button" id="story2">☢ New game — Fallout 2</button>
+            <button type="button" id="story1" class="quiet">🔦 New game — Fallout 1</button>
+            <button type="button" id="randombtn" class="quiet">🎲 Random expedition</button>
+          </div>
+          <div class="note" style="margin-bottom:0">Story mode builds your character, rolls the intro, and drops you at the start of the road. Expeditions land your current hero on a random stretch of wasteland crawling with hostiles.</div>
+        </div>
         <div id="mapcard" hidden>
-          <div class="cardtitle">Walk a map</div>
+          <div class="cardtitle">Free roam — walk any map</div>
           <div class="fields">
             <select id="mapsel" aria-label="map"></select>
             <div style="display: flex; gap: 0.6rem; flex-wrap: wrap">
