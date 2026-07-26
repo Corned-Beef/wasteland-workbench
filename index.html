@@ -278,6 +278,19 @@
       }
       #elevbox button { display: block; width: 100%; margin-top: 0.5rem; min-height: 40px; }
       #elevbox button.here { opacity: 0.5; }
+      /* Scenario briefing */
+      #briefing {
+        position: fixed; inset: 0; z-index: 58; background: #0d0a06ee;
+        display: flex; align-items: center; justify-content: center; padding: 1rem;
+      }
+      #briefing[hidden] { display: none; }
+      #briefbox {
+        width: min(400px, 92vw); background: var(--panel); border: 1px solid var(--amber);
+        border-radius: 10px; padding: 1rem 1.1rem;
+      }
+      #briefobjs { margin: 0.3rem 0 0.8rem; padding-left: 1.1rem; font-size: 0.85rem; }
+      #briefobjs li { margin: 0.2rem 0; }
+      #briefbox button { display: block; width: 100%; margin-top: 0.5rem; min-height: 42px; }
       /* PIP-Boy quest log */
       #pipboy {
         position: absolute; inset: 0; z-index: 56; background: #0d0a06e0;
@@ -448,7 +461,7 @@
       #spritedirs button { padding: 0.3rem 0.7rem; }
       #spritedirs button[aria-pressed='true'] { outline: 2px solid var(--amber); }
     </style>
-    <script type="module" crossorigin src="./assets/index-BmGWo-bZ.js"></script>
+    <script type="module" crossorigin src="./assets/index-Yo2IgYB_.js"></script>
   </head>
   <body>
     <div class="wrap">
@@ -691,6 +704,16 @@
       <footer>
         Game data streams from your private pack on demand — no game content ships with this page.
       </footer>
+    </div>
+    <div id="briefing" hidden>
+      <div id="briefbox">
+        <div class="cardtitle" id="brieftitle"></div>
+        <div class="note" id="briefstory" style="margin:0.5rem 0 0.7rem"></div>
+        <div class="cardtitle" style="font-size:0.8rem">Objectives</div>
+        <ul id="briefobjs"></ul>
+        <button type="button" id="briefgo">▶ Set out</button>
+        <button type="button" id="briefback" class="quiet">Not yet</button>
+      </div>
     </div>
     <div id="moviewrap" hidden>
       <canvas id="moviecanvas"></canvas>
