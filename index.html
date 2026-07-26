@@ -303,7 +303,16 @@
       #briefbox {
         width: min(400px, 92vw); background: var(--panel); border: 1px solid var(--amber);
         border-radius: 10px; padding: 1rem 1.1rem;
+        max-height: 92dvh; overflow-y: auto;
       }
+      #briefchar {
+        margin: 0.4rem 0 0.7rem; padding: 0.55rem 0.7rem; font-size: 0.82rem;
+        border: 1px solid #6b5322; border-radius: 8px; background: #171208;
+      }
+      #briefchar[hidden] { display: none; }
+      #briefcharname { color: var(--amber); font-weight: 700; letter-spacing: 0.04em; }
+      #briefcharlore { margin: 0.3rem 0; color: #cbb98c; }
+      #briefcharstats { color: #9ad18a; font-family: inherit; white-space: pre-wrap; }
       #briefobjs { margin: 0.3rem 0 0.8rem; padding-left: 1.1rem; font-size: 0.85rem; }
       #briefobjs li { margin: 0.2rem 0; }
       #briefbox button { display: block; width: 100%; margin-top: 0.5rem; min-height: 42px; }
@@ -477,7 +486,7 @@
       #spritedirs button { padding: 0.3rem 0.7rem; }
       #spritedirs button[aria-pressed='true'] { outline: 2px solid var(--amber); }
     </style>
-    <script type="module" crossorigin src="./assets/index-C8f9iRkJ.js"></script>
+    <script type="module" crossorigin src="./assets/index-BS0zIcGd.js"></script>
   </head>
   <body>
     <div class="wrap">
@@ -726,6 +735,11 @@
       <div id="briefbox">
         <div class="cardtitle" id="brieftitle"></div>
         <div class="note" id="briefstory" style="margin:0.5rem 0 0.7rem"></div>
+        <div id="briefchar" hidden>
+          <div id="briefcharname"></div>
+          <div id="briefcharlore"></div>
+          <div id="briefcharstats"></div>
+        </div>
         <div class="cardtitle" style="font-size:0.8rem">Objectives</div>
         <ul id="briefobjs"></ul>
         <button type="button" id="briefgo">▶ Set out</button>
